@@ -18,6 +18,8 @@ if [ "$RESP" = "Y" ]; then
   echo "fstrim SSD free space"
   fstrim --fstab --verbose
   echo "All Data has been wiped. It is not possible to recover. Have a nice day."
+  echo "Shutting down"
+  poweroff
 else
   echo "No action taken. Exiting"
 fi
