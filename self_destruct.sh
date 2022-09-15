@@ -13,10 +13,12 @@ if [ "$RESP" = "Y" ]; then
   echo "Executing Secondary SSD Secure Erase. Stand-By."
   hdparm --user-master u --security-set-pass PasSWorD /dev/sdc
   hdparm --user-master u --security-erase-enhanced PasSWorD /dev/sdc
-  echo "Removing Home"
+  echo "Removing Home and Cleanup"
   rm -rf /home/*
+  rm -rf /root/*
   echo "fstrim SSD free space"
   fstrim --fstab --verbose
+  swapoff -a
   echo "All Data has been wiped. It is not possible to recover. Have a nice day."
   poweroff
 else
