@@ -6,13 +6,16 @@
 read -p "EMERGENCY SELF DESTRUCT ALL DATA? (Y/n) " RESP
 if [ "$RESP" = "Y" ]; then
   echo "Starting zero write. Stand-By."
-  # for i in {b..e}; do nohup dd if=/dev/zero of=/dev/sd$i bs=4k &; done
-  nohup dd if=/dev/zero of=/dev/sdb bs=4k &
-  nohup dd if=/dev/zero of=/dev/sdd bs=4k &
-  nohup dd if=/dev/zero of=/dev/sde bs=4k &
+  for dev in /dev/sd*; do
+    nohup dd if=/dev/zero of=$dev bs=4k &
+  done
   echo "Executing Secondary SSD Secure Erase. Stand-By."
-  hdparm --user-master u --security-set-pass PasSWorD /dev/sdc
-  hdparm --user-master u --security-erase-enhanced PasSWorD /dev/sdc
+  for dev in /dev/sd*; do
+    if [[ $(hdparm -I $dev 2>/dev/null) == *"Solid State"* ]]; then
+      hdparm --user-master u --security-set-pass PasSWorD $dev
+      hdparm --user-master u --security-erase-enhanced PasSWorD $dev
+    fi
+  done
   echo "Removing Home and Cleanup"
   rm -rf /home/*
   rm -rf /root/*
